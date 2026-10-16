@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#000000"><link rel="manifest" href="manifest.json">
+<link rel="icon" href="icon-192.png"><link rel="apple-touch-icon" href="icon-192.png">
+<title>Ink</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Manrope:wght@200;300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--tint:rgba(126,224,195,.10);--blob:#7ee0c3;--mint:#7ee0c3;--amb:#ffd27a;--cor:#ff7a59;--vio:#b79cff}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{height:100%;margin:0;color:#fff;font-family:Manrope,system-ui,-apple-system,"Segoe UI",sans-serif;overflow:hidden}
+body{background:radial-gradient(130% 55% at 50% -8%,var(--tint),transparent 70%),#000;transition:background 1s}
+button,input,textarea{font:inherit;color:inherit}button{background:none;border:0;cursor:pointer;padding:0}
+::-webkit-scrollbar{display:none}
+#bg{position:fixed;inset:0;z-index:0;overflow:hidden;pointer-events:none}
+.blob{position:absolute;width:60vmax;height:60vmax;border-radius:50%;filter:blur(90px);opacity:.16;background:var(--blob);top:-30vmax;left:-20vmax;animation:dr 26s ease-in-out infinite alternate;transition:background 1.2s}
+.blob+.blob{top:auto;left:auto;right:-25vmax;bottom:-30vmax;animation-duration:34s;opacity:.1}
+@keyframes dr{to{transform:translate(9vmax,7vmax) scale(1.1)}}
+.lbl{font-size:11px;text-transform:uppercase;letter-spacing:.12em;color:rgba(255,255,255,.68)}
+header{position:fixed;top:0;left:0;right:0;z-index:5;display:flex;justify-content:space-between;align-items:center;padding:calc(env(safe-area-inset-top,0px) + 14px) 20px 8px}
+#more{font-size:22px;line-height:1;padding:4px 8px;color:rgba(255,255,255,.8)}
+#pager{position:fixed;inset:0;z-index:2;display:flex;overflow-x:auto;overflow-y:hidden;scroll-snap-type:x mandatory;scrollbar-width:none;overscroll-behavior-x:contain}
+.page{flex:0 0 100%;height:100%;scroll-snap-align:start;scroll-snap-stop:always;padding:calc(env(safe-area-inset-top,0px) + 54px) 14px calc(env(safe-area-inset-bottom,0px) + 38px)}
+.in{height:100%;will-change:transform,opacity}
+.card{max-height:100%;overflow-y:auto;overflow-x:hidden;scrollbar-width:none;padding:18px;border-radius:22px;background:linear-gradient(145deg,rgba(255,255,255,.09),rgba(255,255,255,.03));border:1px solid rgba(255,255,255,.1);backdrop-filter:blur(30px) saturate(170%);-webkit-backdrop-filter:blur(30px) saturate(170%);box-shadow:0 12px 40px rgba(0,0,0,.5),inset 0 1px 0 rgba(255,255,255,.14)}
+.card>.r{margin-bottom:14px}.card>.r:last-child{margin-bottom:0}
+.home .in{display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:6px}
+.hero{font-size:min(40vw,180px);font-weight:200;line-height:1;background:linear-gradient(180deg,#fff,rgba(255,255,255,.45));-webkit-background-clip:text;background-clip:text;color:transparent}
+#delta{font-size:15px;font-weight:300;color:rgba(255,255,255,.8);margin-top:10px}
+#goW{margin-top:28px;padding:12px 30px;border-radius:99px;border:1px solid rgba(255,255,255,.18);background:rgba(255,255,255,.06);font-weight:500;letter-spacing:.04em}
+h2{margin:0;font-size:22px;font-weight:300}
+input,textarea{width:100%;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);border-radius:12px;padding:10px 12px;outline:0;color-scheme:dark}
+input:focus,textarea:focus{border-color:rgba(126,224,195,.5)}
+textarea{min-height:34vh;resize:none;line-height:1.55;font-size:16px}
+.moods{display:flex;gap:8px}.moods button{flex:1;font-size:24px;padding:8px 0;border-radius:12px;background:rgba(255,255,255,.05);border:1px solid transparent;opacity:.55;transition:.2s}
+.moods button.on{opacity:1;border-color:var(--mint);background:rgba(126,224,195,.12)}
+.flex{display:flex;justify-content:space-between;align-items:center;gap:10px}
+.pill{padding:8px 14px;border-radius:99px;border:1px solid rgba(255,255,255,.15);font-size:13px;background:rgba(255,255,255,.05)}
+.pill.on{border-color:var(--amb);color:var(--amb)}
+.hint{font-size:14px;font-weight:300;color:var(--vio);line-height:1.5;min-height:0}
+.row{padding:12px 0;border-bottom:1px solid rgba(255,255,255,.07);cursor:pointer}
+.row .t{font-size:14px;font-weight:300;color:rgba(255,255,255,.85);margin-top:4px;line-height:1.45}
+.tag{display:inline-block;font-size:11px;color:var(--mint);margin-right:6px}
+.stat{display:flex;justify-content:space-between;align-items:baseline;padding:8px 0;border-bottom:1px solid rgba(255,255,255,.06)}
+.stat b{font-weight:300;font-size:22px}
+.hmg{display:grid;grid-template-rows:repeat(7,auto);grid-auto-flow:column;grid-auto-columns:1fr;gap:4px}
+.hm{aspect-ratio:1;border-radius:4px;background:rgba(255,255,255,.06)}
+.l1{background:rgba(126,224,195,.25)}.l2{background:rgba(126,224,195,.5)}.l3{background:rgba(126,224,195,.75)}.l4{background:#7ee0c3}.lf{opacity:.2}
+.bars{display:flex;align-items:flex-end;gap:5px;height:70px}
+.bars i{flex:1;border-radius:4px 4px 0 0;height:0;transition:height .7s cubic-bezier(.2,.8,.2,1)}
+.meter{height:5px;border-radius:3px;background:rgba(255,255,255,.08);margin-top:5px;overflow:hidden}.meter i{display:block;height:100%;width:0;background:var(--mint);transition:width .7s cubic-bezier(.2,.8,.2,1)}
+#dots{position:fixed;bottom:calc(env(safe-area-inset-bottom,0px) + 14px);left:0;right:0;z-index:5;display:flex;justify-content:center;gap:6px}
+#dots button{width:5px;height:5px;border-radius:3px;background:rgba(255,255,255,.3);transition:width .25s,background .25s;padding:0}
+#dots button.on{width:18px;background:#fff}
+#scrim{position:fixed;inset:0;z-index:9;background:rgba(0,0,0,.55);opacity:0;pointer-events:none;transition:opacity .25s}
+#sheet{position:fixed;top:0;left:0;right:0;z-index:10;max-height:88%;overflow-y:auto;transform:translateY(-110%);transition:transform .25s cubic-bezier(.2,.8,.2,1);padding:calc(env(safe-area-inset-top,0px) + 16px) 18px 18px;background:rgba(14,14,14,.82);backdrop-filter:blur(30px) saturate(170%);-webkit-backdrop-filter:blur(30px) saturate(170%);border-bottom:1px solid rgba(255,255,255,.12);border-radius:0 0 22px 22px}
+body.open #sheet{transform:none}body.open #scrim{opacity:1;pointer-events:auto}
+#sheet .it{display:block;width:100%;text-align:left;padding:13px 2px;border-bottom:1px solid rgba(255,255,255,.07);font-size:15px;font-weight:300}
+.sub{display:none;padding:12px 0}.sub.show{display:block}.sub>*{margin-bottom:10px}
+#lock{position:fixed;inset:0;z-index:30;background:#000;display:flex;flex-direction:column;gap:14px;align-items:center;justify-content:center;padding:30px}
+#lock input{max-width:280px;text-align:center}
+#toast{position:fixed;left:50%;bottom:60px;transform:translateX(-50%);z-index:40;background:rgba(30,30,30,.95);border:1px solid rgba(255,255,255,.14);padding:9px 16px;border-radius:99px;font-size:13px;opacity:0;pointer-events:none;transition:opacity .25s}
+#toast.on{opacity:1}
+[hidden]{display:none!important}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style></head><body>
+<div id="bg"><div class="blob"></div><div class="blob"></div></div>
+<header><button id="ttl" class="lbl">Ink</button><button id="more" aria-label="Menu">⋯</button></header>
+<main id="pager">
+ <section class="page home"><div class="in">
+  <div class="hero" id="streak">0</div><div class="lbl">day streak</div>
+  <div id="delta"></div><button id="goW">Write</button></div></section>
+ <section class="page"><div class="in"><div class="card">
+  <div class="r flex"><h2>Write</h2><span id="sv" class="lbl"></span></div>
+  <input type="date" id="dt" class="r">
+  <div id="moods" class="r moods"></div>
+  <textarea id="tx" class="r" placeholder="What's on your mind?"></textarea>
+  <div class="r flex"><span id="cnt" class="lbl"></span><button id="del" class="lbl">Delete</button></div>
+  <input id="tg" class="r" placeholder="tags, comma separated">
+  <div class="r flex"><button id="pr" class="pill">Prompt for my mood</button><button id="fv" class="pill">☆ Favourite</button></div>
+  <div class="r"><div class="lbl" style="margin-bottom:6px">Time capsule: seal until</div><input type="date" id="sl"></div>
+  <div id="pt" class="r hint"></div></div></div></section>
+ <section class="page"><div class="in"><div class="card">
+  <div class="r flex"><h2>Entries</h2><button id="ff" class="pill">★ only</button></div>
+  <input id="q" class="r" type="search" placeholder="Search words, tags, dates">
+  <div id="list"></div></div></div></section>
+ <section class="page"><div class="in"><div class="card" id="ins"></div></div></section>
+ <section class="page"><div class="in"><div class="card" id="mem"></div></div></section>
+</main>
+<div id="dots"></div>
+<div id="scrim"></div>
+<div id="sheet" role="dialog" aria-label="Menu">
+ <button class="it" data-a="letter">Unsent letter</button>
+ <div class="sub" id="s-letter"><textarea id="lt" placeholder="Write what you'd never send. It is never saved, not even on this device." style="min-height:18vh"></textarea><button id="rel" class="pill">Release it</button></div>
+ <button class="it" data-a="pass" id="passBtn">Change passcode</button>
+ <div class="sub" id="s-pass"><input id="pw" type="password" placeholder="New passcode (4+ characters)"><div class="lbl">No reset exists. Forget it and the entries are gone.</div><button id="pwgo" class="pill">Save new passcode</button></div>
+ <button class="it" data-a="xj">Export encrypted backup</button>
+ <button class="it" data-a="im">Import backup</button>
+ <div class="sub" id="s-imp"><input id="ipw" type="password" placeholder="Passcode the backup was made with"><button id="ipick" class="pill">Choose backup file</button></div>
+ <button class="it" data-a="erase" style="color:var(--cor)">Erase everything</button>
+ <div class="lbl" id="src" style="padding-top:12px"></div>
+ <div class="sub" id="s-adv"><div class="lbl">Google Drive sync (advanced)</div>
+  <input id="cid" placeholder="OAuth client ID (…apps.googleusercontent.com)" autocomplete="off" spellcheck="false">
+  <input id="apw" type="password" placeholder="Passcode protecting the Drive copy (if different)">
+  <div class="flex" style="flex-wrap:wrap"><button id="cs" class="pill">Save ID</button><button id="cc" class="pill">Connect &amp; sync</button><button id="cx" class="pill">Disconnect</button></div>
+  <div id="sst" class="lbl" style="line-height:1.6"></div></div>
+ <input type="file" id="file" accept="application/json" hidden>
+</div>
+<div id="lock" hidden><div class="lbl" id="llbl">Ink is locked</div><input id="lpw" type="password" placeholder="Passcode"><input id="lpw2" type="password" placeholder="Confirm passcode" hidden><div id="lnote" class="lbl" style="text-align:center;max-width:280px"></div><button id="lgo" class="pill">Unlock</button><div id="lerr" class="lbl" style="color:var(--cor)"></div></div>
+<div id="toast"></div>
+<script>
+const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
+const p2=n=>String(n).padStart(2,'0'),kd=d=>d.getFullYear()+'-'+p2(d.getMonth()+1)+'-'+p2(d.getDate()),TODAY=()=>kd(new Date());
+const pd=s=>{const a=s.split('-').map(Number);return new Date(a[0],a[1]-1,a[2])};
+const wc=t=>((t||'').trim().match(/\S+/g)||[]).length;
+const esc=s=>String(s==null?'':s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const fmt=k=>pd(k).toLocaleDateString(undefined,{weekday:'short',day:'numeric',month:'short',year:'numeric'});
+const RM=window.matchMedia?matchMedia('(prefers-reduced-motion: reduce)').matches:false;
+const MOODS=['😞','😕','😐','🙂','😄'],MC=['#ff7a59','#ffd27a','#9a9a9a','#7ee0c3','#b79cff'];
+const PROMPTS={1:['What is weighing on you, and what is one small thing within your control?','Write to the version of you who will read this in a year.','What do you need most right now?'],2:['What felt off today, and when did it start?','Name one thing that went slightly better than expected.','What would make tomorrow 5% easier?'],3:['Describe an ordinary moment from today in detail.','What have you been putting off, and why?','What did you notice today that you usually miss?'],4:['What went well today, and what did you do to help it along?','Who made your day better, and have you told them?','What do you want more of?'],5:['Capture this feeling: what caused it, and how can you repeat it?','Who or what are you grateful for right now?','What would you tell your future self about today?']};
+let S={e:{}},K=null,SALT=null,cd=TODAY(),page=0,mood=0,fav=false,locked=false,favOnly=false,ticking=false;
+const enc=new TextEncoder(),dec=new TextDecoder();
+const b64=u=>{let s='';for(const x of new Uint8Array(u))s+=String.fromCharCode(x);return btoa(s)},unb64=s=>Uint8Array.from(atob(s),c=>c.charCodeAt(0));
+async function derive(pw,salt){const m=await crypto.subtle.importKey('raw',enc.encode(pw),'PBKDF2',false,['deriveKey']);return crypto.subtle.deriveKey({name:'PBKDF2',salt,iterations:250000,hash:'SHA-256'},m,{name:'AES-GCM',length:256},false,['encrypt','decrypt'])}
+let pq=Promise.resolve();
+function persist(){pq=pq.then(async()=>{try{const j=JSON.stringify(S);if(K){const iv=crypto.getRandomValues(new Uint8Array(12));const d=await crypto.subtle.encrypt({name:'AES-GCM',iv},K,enc.encode(j));localStorage.setItem('ink:vault',JSON.stringify({s:b64(SALT),iv:b64(iv),d:b64(d)}));localStorage.removeItem('ink:data')}}catch(e){toast('Could not save (storage full?)')}});return pq}
+function toast(m){const t=$('#toast');t.textContent=m;t.classList.add('on');clearTimeout(toast.t);toast.t=setTimeout(()=>t.classList.remove('on'),2200)}
+const has=k=>S.e[k]&&S.e[k].t&&S.e[k].t.trim();
+const isSealed=e=>!!(e&&e.sl&&e.sl>TODAY());
+function stats(){const ks=Object.keys(S.e).filter(has).sort();if(!ks.length)return{cur:0,best:0,n:0,w:0};
+let d=pd(ks[0]);const end=pd(TODAY());let s=0,cr=0,best=0;
+for(;d<end;d.setDate(d.getDate()+1)){if(has(kd(d))){s++;if(s%7===0)cr=Math.min(2,cr+1)}else if(cr>0)cr--;else s=0;best=Math.max(best,s)}
+if(has(TODAY())){s++;best=Math.max(best,s)}
+return{cur:s,best,n:ks.length,w:ks.reduce((a,k)=>a+wc(S.e[k].t),0)}}
+function countUp(el,to){if(RM||!to){el.textContent=to;return}const t0=performance.now();(function f(t){const k=Math.min(1,(t-t0)/550);el.textContent=Math.round(to*(1-Math.pow(1-k,3)));if(k<1)requestAnimationFrame(f)})(t0)}
+function home(anim){const st=stats(),y=new Date();y.setDate(y.getDate()-1);
+const w0=has(TODAY())?wc(S.e[TODAY()].t):0,w1=has(kd(y))?wc(S.e[kd(y)].t):0;
+anim?countUp($('#streak'),st.cur):$('#streak').textContent=st.cur;
+const df=w0-w1;$('#delta').textContent=!w0?'Nothing written yet today':df>0?'+'+df+' words vs yesterday':df<0?'−'+(-df)+' words vs yesterday':'Same as yesterday';
+const r=document.documentElement.style;
+if(w0){r.setProperty('--tint','rgba(126,224,195,.11)');r.setProperty('--blob','#7ee0c3')}else if(st.cur>0){r.setProperty('--tint','rgba(255,210,122,.10)');r.setProperty('--blob','#ffd27a')}else{r.setProperty('--tint','rgba(183,156,255,.09)');r.setProperty('--blob','#b79cff')}}
+/* editor */
+function paintMoods(){$$('#moods button').forEach(b=>b.classList.toggle('on',+b.dataset.m===mood))}
+function updCnt(){$('#cnt').textContent=wc($('#tx').value)+' words'}
+function loadEd(d){cd=d;const e=S.e[d]||{};locked=isSealed(e);const tx=$('#tx');tx.disabled=locked;tx.value=locked?'':(e.t||'');tx.placeholder=locked?'Sealed until '+fmt(e.sl)+'. Future you will enjoy this.':"What's on your mind?";
+$('#dt').value=d;$('#dt').max=TODAY();mood=locked?0:(e.m||0);fav=!!e.f;paintMoods();$('#tg').value=(e.tg||[]).join(', ');$('#sl').value=e.sl||'';$('#sl').min=kd(new Date(Date.now()+864e5));
+$('#fv').textContent=fav?'★ Favourite':'☆ Favourite';$('#fv').classList.toggle('on',fav);updCnt();$('#pt').textContent='';$('#sv').textContent=''}
+let tm;function onEdit(){updCnt();$('#sv').textContent='…';clearTimeout(tm);tm=setTimeout(saveEd,400)}
+function saveEd(){if(locked)return;const t=$('#tx').value,tg=$('#tg').value.split(',').map(x=>x.trim().toLowerCase()).filter(Boolean).slice(0,8);
+if(!t.trim()&&!mood){if(S.e[cd]){delete S.e[cd];persist()}$('#sv').textContent='';refresh();return}
+const o=S.e[cd]||{};S.e[cd]={t,m:mood,tg,sl:$('#sl').value||'',f:fav,h:o.h!=null?o.h:new Date().getHours(),u:Date.now()};persist();$('#sv').textContent='Saved';refresh()}
+function refresh(){home(false);renderList()}
+/* entries */
+function renderList(){const q=$('#q').value.trim().toLowerCase();
+const ks=Object.keys(S.e).sort().reverse().filter(k=>{const e=S.e[k];if(favOnly&&!e.f)return false;if(!q)return true;if(isSealed(e))return false;return(e.t+' '+(e.tg||[]).join(' ')+' '+k+' '+fmt(k)).toLowerCase().includes(q)});
+$('#list').innerHTML=ks.length?ks.map(k=>{const e=S.e[k],s=isSealed(e);return `<div class="row r" data-k="${k}"><div class="flex"><span class="lbl">${esc(fmt(k))}</span><span>${e.f?'★ ':''}${e.m?MOODS[e.m-1]:''}</span></div><div class="t">${s?'🔒 Sealed until '+esc(fmt(e.sl)):esc((e.t||'').slice(0,110))}</div><div>${(e.tg||[]).map(t=>`<span class="tag">#${esc(t)}</span>`).join('')}</div></div>`}).join(''):'<div class="r hint" style="color:rgba(255,255,255,.5)">Nothing here yet.</div>'}
+/* insights */
+function renderIns(){const st=stats(),t0=new Date();t0.setHours(0,0,0,0);const s0=new Date(t0);s0.setDate(s0.getDate()-t0.getDay()-77);
+let hm='';for(let i=0;i<84;i++){const d=new Date(s0);d.setDate(s0.getDate()+i);const e=S.e[kd(d)],w=e&&e.t?wc(e.t):0;const lv=d>t0?'f':w===0?0:w<50?1:w<150?2:w<300?3:4;hm+=`<i class="hm l${lv}"></i>`}
+const ents=Object.keys(S.e).sort().map(k=>S.e[k]),ms=ents.filter(e=>e.m).slice(-14);
+const hrs={};ents.forEach(e=>{if(e.h!=null&&e.t)hrs[e.h]=(hrs[e.h]||0)+1});const bh=Object.keys(hrs).sort((a,b)=>hrs[b]-hrs[a])[0];
+const tags={};ents.forEach(e=>(e.tg||[]).forEach(t=>tags[t]=(tags[t]||0)+1));const tt=Object.keys(tags).sort((a,b)=>tags[b]-tags[a]).slice(0,5),tm=tt.length?tags[tt[0]]:1;
+const hl=h=>{h=+h;return (h%12||12)+(h<12?' am':' pm')};
+$('#ins').innerHTML=`<div class="r"><h2>Insights</h2></div>
+<div class="r"><div class="stat"><span class="lbl">Current streak</span><b>${st.cur}</b></div><div class="stat"><span class="lbl">Longest</span><b>${st.best}</b></div><div class="stat"><span class="lbl">Entries</span><b>${st.n}</b></div><div class="stat"><span class="lbl">Words</span><b>${st.w}</b></div><div class="stat"><span class="lbl">Avg per entry</span><b>${st.n?Math.round(st.w/st.n):0}</b></div></div>
+<div class="r hint" style="color:rgba(255,255,255,.6);font-size:12px">One missed day is forgiven for every 7 days you write (up to 2 saved).</div>
+<div class="r"><div class="lbl" style="margin-bottom:8px">Last 12 weeks</div><div class="hmg">${hm}</div></div>
+<div class="r"><div class="lbl" style="margin-bottom:8px">Mood, last ${ms.length||0} entries</div><div class="bars">${ms.map(e=>`<i data-h="${e.m*20}" style="background:${MC[e.m-1]}"></i>`).join('')}</div></div>
+<div class="r"><div class="lbl">Your writing hour</div><div style="font-weight:300;margin-top:4px">${ents.length>=3&&bh!=null?'You write most around '+hl(bh)+'.':'Needs 3 entries to tell.'}</div></div>
+<div class="r"><div class="lbl">Top tags</div>${tt.length?tt.map(t=>`<div style="margin-top:8px;font-size:14px;font-weight:300">#${esc(t)} <span class="lbl">${tags[t]}</span><div class="meter"><i data-w="${Math.round(tags[t]/tm*100)}"></i></div></div>`).join(''):'<div class="hint" style="color:rgba(255,255,255,.5)">No tags yet.</div>'}</div>`;
+requestAnimationFrame(()=>requestAnimationFrame(()=>{$$('#ins [data-h]').forEach(b=>b.style.height=b.dataset.h+'%');$$('#ins [data-w]').forEach(b=>b.style.width=b.dataset.w+'%')}))}
+/* memories */
+function memRow(k){const e=S.e[k];return `<div class="row r" data-k="${k}"><div class="lbl">${esc(fmt(k))} ${e.m?MOODS[e.m-1]:''}</div><div class="t">${esc((e.t||'').slice(0,160))}</div></div>`}
+function renderMem(){const td=TODAY(),all=Object.keys(S.e).filter(k=>has(k)&&!isSealed(S.e[k])).sort().reverse();
+const otd=all.filter(k=>k.slice(5)===td.slice(5)&&k<td),cap=all.filter(k=>S.e[k].sl&&S.e[k].sl<=td&&S.e[k].sl>k).slice(0,5);
+$('#mem').innerHTML=`<div class="r"><h2>Memories</h2></div><div class="r lbl">On this day</div>${otd.length?otd.map(memRow).join(''):'<div class="r hint" style="color:rgba(255,255,255,.5)">Nothing from this date yet. Keep writing.</div>'}
+<div class="r lbl" style="margin-top:14px">Time capsules opened</div>${cap.length?cap.map(memRow).join(''):'<div class="r hint" style="color:rgba(255,255,255,.5)">Seal an entry from the Write card to receive one.</div>'}
+<div class="r" style="margin-top:14px"><button id="sur" class="pill">Surprise me</button></div><div id="surv"></div>`}
+function surprise(){const td=TODAY(),old=Object.keys(S.e).filter(k=>has(k)&&!isSealed(S.e[k])&&k<td);if(!old.length){$('#surv').innerHTML='<div class="hint" style="color:rgba(255,255,255,.5)">No past entries yet.</div>';return}$('#surv').innerHTML=memRow(old[Math.floor(Math.random()*old.length)])}
+/* nav */
+const pages=()=>$$('.page');
+function goto(i){const p=$('#pager');p.scrollTo({left:i*p.clientWidth,behavior:RM?'auto':'smooth'})}
+function dots(){$$('#dots button').forEach((b,i)=>b.classList.toggle('on',i===page))}
+function rows(i){if(RM)return;pages()[i].querySelectorAll('.r').forEach((el,j)=>{if(j>8||!el.animate)return;el.animate([{opacity:0,transform:'translateY(8px)'},{opacity:1,transform:'none'}],{duration:260,delay:j*28,easing:'cubic-bezier(.2,.8,.2,1)',fill:'backwards'})})}
+function activate(i){if(i===0)home(true);if(i===1)loadEd(cd);if(i===2)renderList();if(i===3)renderIns();if(i===4)renderMem();rows(i)}
+function frame(){ticking=false;const p=$('#pager'),W=p.clientWidth||1,x=p.scrollLeft;
+if(!RM)pages().forEach((pg,i)=>{const o=Math.max(-1,Math.min(1,(i*W-x)/W)),a=Math.abs(o),el=pg.firstElementChild;el.style.transform=`translateX(${o*-12}%) scale(${1-.06*a})`;el.style.opacity=1-.6*a});
+const n=Math.round(x/W);if(n!==page){page=n;activate(n)}dots()}
+/* sheet */
+const openSheet=()=>document.body.classList.add('open'),closeSheet=()=>{document.body.classList.remove('open');$$('.sub').forEach(s=>s.classList.remove('show'))};
+function download(name,type,text){const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([text],{type}));a.download=name;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(a.href),2000)}
+function sheetAction(a){
+if(a==='letter'||a==='pass'||a==='im'){$('#s-'+(a==='im'?'imp':a)).classList.toggle('show');return}
+closeSheet();
+if(a==='xj'){persist().then(()=>{const b=localStorage.getItem('ink:vault');if(!b){toast('Nothing to export');return}download('ink-backup-'+TODAY()+'.enc.json','application/json',b);toast('Encrypted backup saved. Needs your passcode to restore.')})}
+if(a==='erase'&&confirm('Erase ALL entries and the passcode from this device? This cannot be undone.')){localStorage.removeItem('ink:data');localStorage.removeItem('ink:vault');localStorage.removeItem('ink:cid');location.reload()}}
+async function setPass(){const v=$('#pw').value;if(v.length<4){toast('Use at least 4 characters');return}
+SALT=crypto.getRandomValues(new Uint8Array(16));K=await derive(v,SALT);await persist();$('#pw').value='';closeSheet();toast('Passcode changed. Entries re-encrypted.')}
+function menuLabels(){$('#src').textContent='Offline only. Entries are always encrypted in this browser.'}
+async function importFile(f){try{const o=JSON.parse(await f.text());let src=o;
+if(o&&o.s&&o.iv&&o.d){let k=K;if(o.s!==b64(SALT)){const pw=$('#ipw').value;if(!pw){toast('Enter the backup passcode first');return}k=await derive(pw,unb64(o.s))}
+src=JSON.parse(dec.decode(await crypto.subtle.decrypt({name:'AES-GCM',iv:unb64(o.iv)},k,unb64(o.d))))}
+if(!src||typeof src.e!=='object')throw 0;let n=0;for(const d in src.e){const e=src.e[d];if(!/^\d{4}-\d{2}-\d{2}$/.test(d)||!e||typeof e.t!=='string')continue;if(!S.e[d]||(e.u||0)>(S.e[d].u||0)){S.e[d]=e;n++}}
+$('#ipw').value='';await persist();refresh();closeSheet();toast('Imported '+n+' entries')}catch(x){toast('Could not read that backup (wrong passcode or bad file)')}}
+/* google drive sync (encrypted vault only, appDataFolder) */
+const SCOPE='https://www.googleapis.com/auth/drive.appdata',FN='ink-vault.json';let TOK=null;
+const cid=()=>localStorage.getItem('ink:cid')||'',sst=m=>{$('#sst').textContent=m};
+async function tf(url,o){o=o||{};const c=new AbortController(),t=setTimeout(()=>c.abort(),20000);try{const r=await fetch(url,Object.assign({},o,{signal:c.signal,headers:Object.assign({Authorization:'Bearer '+TOK},o.headers||{})}));if(!r.ok)throw new Error('Drive replied '+r.status);return r}finally{clearTimeout(t)}}
+function loadGIS(){return new Promise((res,rej)=>{if(window.google&&google.accounts&&google.accounts.oauth2)return res();const s=document.createElement('script');s.src='https://accounts.google.com/gsi/client';s.onload=()=>res();s.onerror=()=>rej(new Error('Could not load Google sign-in (offline?)'));document.head.appendChild(s)})}
+function getToken(){return new Promise((res,rej)=>{google.accounts.oauth2.initTokenClient({client_id:cid(),scope:SCOPE,callback:r=>{if(r.error)rej(new Error(r.error));else{TOK=r.access_token;res()}},error_callback:e=>rej(new Error(e&&e.type||'sign-in closed'))}).requestAccessToken()})}
+async function syncNow(){
+if(!K){sst('Set a passcode first. Only encrypted data is ever uploaded.');return}
+if(!cid()){sst('Save your OAuth client ID first.');return}
+try{sst('Signing in…');await loadGIS();await getToken();sst('Checking Drive…');
+const l=await(await tf('https://www.googleapis.com/drive/v3/files?spaces=appDataFolder&fields=files(id)&q='+encodeURIComponent("name='"+FN+"'"))).json();
+const f=l.files&&l.files[0];let merged=0,adopted=false;
+if(f){const rv=JSON.parse(await(await tf('https://www.googleapis.com/drive/v3/files/'+f.id+'?alt=media')).text());let k=K;
+if(rv.s!==b64(SALT)){const pw=$('#apw').value;if(!pw){sst('Drive vault was made on another device. Enter your passcode above and retry.');return}k=await derive(pw,unb64(rv.s))}
+let rs;try{rs=JSON.parse(dec.decode(await crypto.subtle.decrypt({name:'AES-GCM',iv:unb64(rv.iv)},k,unb64(rv.d))))}catch(e){sst('Could not decrypt the Drive vault. Wrong passcode?');return}
+if(k!==K){SALT=unb64(rv.s);K=k;adopted=true}
+if(rs&&rs.e)for(const d in rs.e){const e=rs.e[d];if(/^\d{4}-\d{2}-\d{2}$/.test(d)&&e&&typeof e.t==='string'&&(!S.e[d]||(e.u||0)>(S.e[d].u||0))){S.e[d]=e;merged++}}
+refresh()}
+await persist();const body=localStorage.getItem('ink:vault');if(!body)throw new Error('No local vault to upload');
+if(f)await tf('https://www.googleapis.com/upload/drive/v3/files/'+f.id+'?uploadType=media',{method:'PATCH',headers:{'Content-Type':'application/json'},body});
+else{const bd='inkb'+Date.now(),mp='--'+bd+'\r\nContent-Type: application/json\r\n\r\n'+JSON.stringify({name:FN,parents:['appDataFolder']})+'\r\n--'+bd+'\r\nContent-Type: application/json\r\n\r\n'+body+'\r\n--'+bd+'--';await tf('https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart',{method:'POST',headers:{'Content-Type':'multipart/related; boundary='+bd},body:mp})}
+sst('Synced '+new Date().toLocaleTimeString()+(merged?' · merged '+merged+' from Drive':'')+(adopted?' · this device now uses the Drive copy\'s key':''))}
+catch(e){sst('Sync failed: '+(e&&e.message||e))}}
+function advWire(){
+let lp;const src=$('#src'),end=()=>clearTimeout(lp);
+src.addEventListener('pointerdown',()=>{lp=setTimeout(()=>{$('#cid').value=cid();$('#s-adv').classList.add('show');sst('Add '+location.origin+' to Authorized JavaScript origins in Google Cloud.')},600)});
+['pointerup','pointerleave','pointercancel'].forEach(t=>src.addEventListener(t,end));
+$('#cs').onclick=()=>{const v=$('#cid').value.trim();if(v&&!/\.apps\.googleusercontent\.com$/.test(v)){sst('That does not look like a client ID.');return}v?localStorage.setItem('ink:cid',v):localStorage.removeItem('ink:cid');sst(v?'Client ID saved on this device only.':'Client ID cleared.')};
+$('#cc').onclick=()=>{const v=$('#cid').value.trim();if(v&&v!==cid()){if(!/\.apps\.googleusercontent\.com$/.test(v)){sst('That does not look like a client ID.');return}localStorage.setItem('ink:cid',v)}syncNow()};
+$('#cx').onclick=()=>{try{if(TOK&&window.google&&google.accounts)google.accounts.oauth2.revoke(TOK)}catch(e){}TOK=null;sst('Disconnected. Drive copy is untouched.')}}
+/* wire up */
+function wire(){
+$('#moods').innerHTML=MOODS.map((m,i)=>`<button data-m="${i+1}" aria-label="mood ${i+1}">${m}</button>`).join('');
+$('#dots').innerHTML=pages().map((_,i)=>`<button aria-label="Page ${i+1}"></button>`).join('');
+$$('#dots button').forEach((b,i)=>b.onclick=()=>goto(i));
+$('#pager').addEventListener('scroll',()=>{if(!ticking){ticking=true;requestAnimationFrame(frame)}},{passive:true});
+$('#goW').onclick=()=>{cd=TODAY();goto(1)};
+$('#more').onclick=openSheet;$('#ttl').onclick=openSheet;$('#scrim').onclick=closeSheet;
+$('#moods').onclick=e=>{const b=e.target.closest('button');if(!b||locked)return;mood=mood===+b.dataset.m?0:+b.dataset.m;paintMoods();onEdit()};
+$('#tx').oninput=onEdit;$('#tg').oninput=onEdit;$('#sl').onchange=onEdit;
+$('#dt').onchange=e=>{saveEd();const v=e.target.value;if(v&&v<=TODAY())loadEd(v);else{e.target.value=cd;toast('Pick today or an earlier date')}};
+$('#fv').onclick=()=>{if(locked)return;fav=!fav;$('#fv').textContent=fav?'★ Favourite':'☆ Favourite';$('#fv').classList.toggle('on',fav);saveEd()};
+$('#pr').onclick=()=>{const l=PROMPTS[mood||3];$('#pt').textContent=l[Math.floor(Math.random()*l.length)]};
+$('#del').onclick=()=>{if(locked){toast('Sealed until '+fmt(S.e[cd].sl)+'. It can\'t be deleted before then.');return}if(S.e[cd]&&confirm('Delete this entry?')){delete S.e[cd];persist();loadEd(cd);refresh()}};
+$('#q').oninput=renderList;$('#ff').onclick=()=>{favOnly=!favOnly;$('#ff').classList.toggle('on',favOnly);renderList()};
+const open=e=>{const r=e.target.closest('[data-k]');if(r){loadEd(r.dataset.k);goto(1)}};
+$('#list').onclick=open;$('#mem').addEventListener('click',e=>{if(e.target.id==='sur')surprise();else open(e)});
+$('#sheet').onclick=e=>{const b=e.target.closest('.it');if(!b)return;sheetAction(b.dataset.a)};
+$('#pwgo').onclick=setPass;$('#ipick').onclick=()=>$('#file').click();
+$('#rel').onclick=()=>{const t=$('#lt');if(!t.value.trim())return;t.style.transition=RM?'none':'opacity .7s';t.style.opacity=0;setTimeout(()=>{t.value='';t.style.opacity=1;closeSheet();toast('Released. Nothing was saved.')},RM?0:700)};
+$('#file').onchange=e=>{if(e.target.files[0])importFile(e.target.files[0]);e.target.value=''};
+document.addEventListener('keydown',e=>{if(e.key==='Escape')closeSheet();const t=e.target.tagName;if(t==='INPUT'||t==='TEXTAREA')return;if(e.key==='ArrowRight')goto(Math.min(page+1,4));if(e.key==='ArrowLeft')goto(Math.max(page-1,0))});
+let hid=0;document.addEventListener('visibilitychange',()=>{if(document.hidden)hid=Date.now();else if(K&&hid&&Date.now()-hid>60000)location.reload()});
+}
+function start(){wire();advWire();menuLabels();loadEd(TODAY());home(true);renderList();dots();$$('.page')[0].querySelectorAll('.r');
+if('serviceWorker' in navigator)navigator.serviceWorker.register('sw.js').catch(()=>{})}
+function setup(){let old=null;try{old=JSON.parse(localStorage.getItem('ink:data'))}catch(e){}if(!old||typeof old.e!=='object')old=null;
+$('#llbl').textContent=old?'Create a passcode to encrypt your existing entries':'Create a passcode';$('#lpw2').hidden=false;$('#lgo').textContent='Create';$('#lnote').textContent='No reset exists. Forget it and your entries are gone.';
+const go=async()=>{const a=$('#lpw').value;if(a.length<4){$('#lerr').textContent='Use at least 4 characters';return}if(a!==$('#lpw2').value){$('#lerr').textContent='Passcodes do not match';return}
+SALT=crypto.getRandomValues(new Uint8Array(16));K=await derive(a,SALT);S=old||{e:{}};await persist();if(!localStorage.getItem('ink:vault')){K=null;$('#lerr').textContent='Could not save. Is storage blocked?';return}
+$('#lpw').value=$('#lpw2').value='';$('#lock').hidden=true;start()};
+$('#lgo').onclick=go;$('#lpw2').onkeydown=e=>{if(e.key==='Enter')go()};$('#lpw').focus()}
+async function boot(){$('#lock').hidden=false;const v=localStorage.getItem('ink:vault');
+if(v){const V=JSON.parse(v);
+const go=async()=>{try{SALT=unb64(V.s);const k=await derive($('#lpw').value,SALT);const pt=await crypto.subtle.decrypt({name:'AES-GCM',iv:unb64(V.iv)},k,unb64(V.d));S=JSON.parse(dec.decode(pt));K=k;$('#lock').hidden=true;start()}catch(e){$('#lerr').textContent='Wrong passcode';$('#lpw').value=''}};
+$('#lgo').onclick=go;$('#lpw').onkeydown=e=>{if(e.key==='Enter')go()};$('#lpw').focus();return}
+setup()}
+boot();
+</script></body></html>
